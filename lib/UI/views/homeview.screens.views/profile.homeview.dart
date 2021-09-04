@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:boxshape/Firebase/services/users.firebase.dart';
 import 'package:boxshape/Helpers/models/userdata.model.dart';
 import 'package:boxshape/Helpers/preferences/login.user.prefs.dart';

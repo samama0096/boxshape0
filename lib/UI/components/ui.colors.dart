@@ -8,5 +8,3 @@ class My_Colors {
   static Color secondarybuttonColor = Color(0xFFFFFFFF);
   static Color backgroundScaffoldColor = Color(0xFF070911);
 }
-
-ThemeData _themeData = ThemeData();

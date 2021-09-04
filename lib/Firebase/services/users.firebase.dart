@@ -3,9 +3,12 @@ import 'package:boxshape/Helpers/preferences/login.user.prefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserDataFirebaseServices {
+//instance for collection of authenticated users
   final _authusersDoc = FirebaseFirestore.instance.collection('auth_usersdata');
+  //instance for collection of active users
   final _activeusersDoc = FirebaseFirestore.instance.collection('activeusers');
 
+//save login status of user to active users collection!
   Future<void> saveLoginStatusOnDatabase(String username) async {
     await _activeusersDoc
         .doc(username)
@@ -14,6 +17,7 @@ class UserDataFirebaseServices {
         .catchError((e) => print(e));
   }
 
+//set active status of user from login true to login false!
   Future<void> removeLoginStatusOnDatabase(String username) async {
     await _activeusersDoc
         .doc(username)
@@ -22,7 +26,16 @@ class UserDataFirebaseServices {
         .catchError((e) => print(e));
   }
 
-  Future<void> createNewUserInDataBase(
+  Future checkIfUsernamePresent(String username) async {
+    DocumentSnapshot docSnap = await _authusersDoc.doc(username).get();
+    if (!docSnap.exists) {
+      return 200;
+    } else {
+      return 300;
+    }
+  }
+
+  Future createNewUserInDataBase(
       {String? fullname,
       String? username,
       String? password,

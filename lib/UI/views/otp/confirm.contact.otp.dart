@@ -76,7 +76,6 @@ class _ConfirmContactview extends State<ConfirmContactview> {
                                     color: My_Colors.textColor, fontSize: 26),
                               ),
                             ),
-                            Spacer(),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
@@ -111,7 +110,6 @@ class _ConfirmContactview extends State<ConfirmContactview> {
                             SizedBox(
                               height: 4,
                             ),
-                            Spacer(),
                           ],
                         )),
               ),

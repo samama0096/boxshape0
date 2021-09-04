@@ -22,7 +22,8 @@ class _SignupviewState extends State<Signupview> {
   TextEditingController contactcont = TextEditingController();
   var verf_ID;
   FirebaseAuth _auth = FirebaseAuth.instance;
-
+  UserDataFirebaseServices userDataFirebaseServices =
+      UserDataFirebaseServices();
   bool showPassword = true;
   bool isLoading = false;
 
@@ -68,7 +69,6 @@ class _SignupviewState extends State<Signupview> {
                                     color: My_Colors.textColor, fontSize: 26),
                               ),
                             ),
-                            Spacer(),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
@@ -261,7 +261,6 @@ class _SignupviewState extends State<Signupview> {
                             SizedBox(
                               height: 20,
                             ),
-                            Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -276,7 +275,6 @@ class _SignupviewState extends State<Signupview> {
                                 ),
                               ],
                             ),
-                            Spacer(),
                           ],
                         )),
               ),
@@ -292,43 +290,52 @@ class _SignupviewState extends State<Signupview> {
                     setState(() {
                       isLoading = true;
                     });
-                    await _auth.verifyPhoneNumber(
-                        phoneNumber: contactcont.text,
-                        verificationCompleted: (v) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        },
-                        verificationFailed: (v) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.red,
-                              content: Text(
-                                "Error sending code!",
-                                style: TextStyle(color: Colors.white),
-                              )));
-                        },
-                        codeSent: (vID, resToken) {
-                          setState(() {
-                            isLoading = false;
-                            verf_ID = vID;
-                          });
-                          print("OK");
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ConfirmContactview(
-                                        verfID: verf_ID,
-                                        fullname: fullnamecont.text,
-                                        email: emailcont.text,
-                                        password: passwordcont.text,
-                                        contact: contactcont.text,
-                                        username: usernamecont.text,
-                                      )));
-                        },
-                        codeAutoRetrievalTimeout: (v) {});
+                    int statusCode = await userDataFirebaseServices
+                        .checkIfUsernamePresent(usernamecont.text);
+                    if (statusCode == 200) {
+                      await _auth.verifyPhoneNumber(
+                          phoneNumber: contactcont.text,
+                          verificationCompleted: (v) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          },
+                          verificationFailed: (v) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  "Error sending code!",
+                                  style: TextStyle(color: Colors.white),
+                                )));
+                          },
+                          codeSent: (vID, resToken) {
+                            setState(() {
+                              isLoading = false;
+                              verf_ID = vID;
+                            });
+                            print("OK");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ConfirmContactview(
+                                          verfID: verf_ID,
+                                          fullname: fullnamecont.text,
+                                          email: emailcont.text,
+                                          password: passwordcont.text,
+                                          contact: contactcont.text,
+                                          username: usernamecont.text,
+                                        )));
+                          },
+                          codeAutoRetrievalTimeout: (v) {});
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Username already taken"),
+                        duration: Duration(seconds: 1),
+                      ));
+                    }
                   }
                 },
                 child: Container(
